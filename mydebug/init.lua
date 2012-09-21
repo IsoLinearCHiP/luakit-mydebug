@@ -57,7 +57,7 @@ local main_js = lousy.load(getcwd() .. "debug.js")
 function table.repr(tbl)
     local out = ""
     for k,v in pairs(tbl) do 
-    	out = out .. k .. " : " .. tostring(v) .. ",\n"
+    	out = out .. tostring(k) .. " : " .. tostring(v) .. ",\n"
     end
     return "{ " .. out .. " }"
 end
