@@ -62,9 +62,19 @@ function table.repr(tbl)
     return "{ " .. out .. " }"
 end
 
+-- cache table for references
+local g_refmem = {}
+
+local function dereference(x)
+    assert (( string.find(x, "%.") == nil ), "hierarchy not allowed in dereferene")
+    local _,_, t = string.find(x, "(%b[])")
+    if t then return g_refmem[t] else return x end
+end
+
 function dir(x)
     -- print("dir'ing " .. x .. "\n")
     local tbl = _G
+
     if string.find(x, "[.]") ~= nil then
         local path = {}
         util.string.split(x, '[.]', path)
@@ -80,11 +90,18 @@ function dir(x)
     local out = ""
     for k,v in pairs(tbl) do
         if string.len(out) > 0 then out = out .. ",\n" end
-        local strrepr = tostring(v)
+        local keyrepr, valrepr = tostring(k), tostring(v)
+        -- if we have a referene, store it in our cache table
+        local t = type(k)
+        if ((t ~= "string") and (t ~= "number")) then
+            keyrepr = "[" .. keyrepr .. "]"
+            g_refmem[keyrepr] = k
+        end
+
         -- FIXME: need to check for more 'bad' characters for jsonification, should write a function for json marshaling
-        strrepr = string.gsub(strrepr, "\n", "\\n")
-        strrepr = string.gsub(strrepr, '"', '\\"')
-        out = out .. string.format('{ "key" : "%s", "value" : "%s", "type" : "%s" }', tostring(k), strrepr, tostring(type(v)))
+        valrepr = string.gsub(valrepr, "\n", "\\n")
+        valrepr = string.gsub(valrepr, '"', '\\"')
+        out = out .. string.format('{ "key" : "%s", "value" : "%s", "type" : "%s" }', keyrepr, valrepr, tostring(type(v)))
     end
     -- print("[\n" .. out .. "\n]")
     return "[\n" .. out .. "\n]"
