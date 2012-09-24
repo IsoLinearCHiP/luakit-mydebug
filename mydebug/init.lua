@@ -56,48 +56,48 @@ local main_js = lousy.load(getcwd() .. "debug.js")
 
 function table.repr(tbl)
     local out = ""
-    for k,v in pairs(tbl) do 
-    	out = out .. tostring(k) .. " : " .. tostring(v) .. ",\n"
+    for k,v in pairs(tbl) do
+        out = out .. tostring(k) .. " : " .. tostring(v) .. ",\n"
     end
     return "{ " .. out .. " }"
 end
 
-function dir(x) 
+function dir(x)
     -- print("dir'ing " .. x .. "\n")
     local tbl = _G
-    if string.find(x, "[.]") ~= nil then 
+    if string.find(x, "[.]") ~= nil then
         local path = {}
-    	util.string.split(x, '[.]', path)
+        util.string.split(x, '[.]', path)
         -- print(table.concat(path, ','))
-        for _,v in pairs(path) do 
-        	if tonumber(v) ~= nil then v = tonumber(v) end
-        	tbl = tbl[v]
+        for _,v in pairs(path) do
+            if tonumber(v) ~= nil then v = tonumber(v) end
+            tbl = tbl[v]
         end
     else
-    	tbl = tbl[x]
+        tbl = tbl[x]
     end
 
-    local out = "" 
-    for k,v in pairs(tbl) do 
-    	if string.len(out) > 0 then out = out .. ",\n" end
-    	local strrepr = tostring(v)
-    	-- FIXME: need to check for more 'bad' characters for jsonification, should write a function for json marshaling
-    	strrepr = string.gsub(strrepr, "\n", "\\n")
-    	strrepr = string.gsub(strrepr, '"', '\\"')
-    	out = out .. string.format('{ "key" : "%s", "value" : "%s", "type" : "%s" }', tostring(k), strrepr, tostring(type(v)))
+    local out = ""
+    for k,v in pairs(tbl) do
+        if string.len(out) > 0 then out = out .. ",\n" end
+        local strrepr = tostring(v)
+        -- FIXME: need to check for more 'bad' characters for jsonification, should write a function for json marshaling
+        strrepr = string.gsub(strrepr, "\n", "\\n")
+        strrepr = string.gsub(strrepr, '"', '\\"')
+        out = out .. string.format('{ "key" : "%s", "value" : "%s", "type" : "%s" }', tostring(k), strrepr, tostring(type(v)))
     end
     -- print("[\n" .. out .. "\n]")
     return "[\n" .. out .. "\n]"
 end
 
-function inspect(x) 
+function inspect(x)
 end
 
 -- :lua (function(w) w.pprint = function(x) local out = ""; for k,v in pairs(x) do out = out .. tostring(k) .. " : " .. "{ " .. tostring(v) .. " }\n" end return out end end)(w)
-function pprint(x) 
-    local out = "" 
-    for k,v in pairs(x) do 
-    	out = out .. tostring(k) .. " : " .. "{ " .. tostring(v) .. " }\n" 
+function pprint(x)
+    local out = ""
+    for k,v in pairs(x) do
+        out = out .. tostring(k) .. " : " .. "{ " .. tostring(v) .. " }\n"
     end
     return out
 end
@@ -172,4 +172,6 @@ add_cmds({
     cmd("debug", function (w)
             w:new_tab(chrome_page)
         end),
+
+-- vim: set si sta ts=4 sw=4 expandtab:
 })
