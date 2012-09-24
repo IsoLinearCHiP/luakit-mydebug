@@ -81,6 +81,7 @@ function dir(x)
         -- print(table.concat(path, ','))
         for _,v in pairs(path) do
             if tonumber(v) ~= nil then v = tonumber(v) end
+            if string.find(v, "(%b[])") ~= nil then v=dereference(v) end
             tbl = tbl[v]
         end
     else
